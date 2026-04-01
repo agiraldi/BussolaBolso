@@ -61,7 +61,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: surfaceColor,
         surfaceTintColor: Colors.transparent,
         elevation: 2,

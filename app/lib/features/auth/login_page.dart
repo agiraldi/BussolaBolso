@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import 'forgot_password_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -78,9 +80,9 @@ class LoginPage extends StatelessWidget {
                       children: [
                         TextFormField(
                           decoration: const InputDecoration(
-                            labelText: 'E-mail',
-                            hintText: 'Digite seu e-mail',
-                            prefixIcon: Icon(Icons.email_outlined),
+                            labelText: 'E-mail ou CPF',
+                            hintText: 'Digite seu e-mail ou CPF',
+                            prefixIcon: Icon(Icons.person_outline),
                           ),
                           keyboardType: TextInputType.emailAddress,
                         ),
@@ -98,7 +100,13 @@ class LoginPage extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => const ForgotPasswordPage(),
+                                ),
+                              );
+                            },
                             child: const Text(
                               'Esqueci minha senha',
                               style: TextStyle(color: AppTheme.primaryColor),
@@ -122,9 +130,15 @@ class LoginPage extends StatelessWidget {
                   children: [
                     Text('Ainda não tem conta?', style: Theme.of(context).textTheme.bodyMedium),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterPage(),
+                          ),
+                        );
+                      },
                       child: const Text(
-                        'Registre-se',
+                        'Cadastre-se',
                         style: TextStyle(
                           color: AppTheme.actionColor,
                           fontWeight: FontWeight.bold,
