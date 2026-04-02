@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "b1e60086-a4c0-40db-9fc1-d68a2d0b5e52",
+		"name": "BussolaBolso_v2_com_TaxId",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Joao\",\n  \"lastName\": \"SilvaTeste\",\n  \"email\": \"joao.silvateste@bussola.com\",\n  \"password\": \"SenhaSuperForte!2\",\n  \"taxId\": \"12345678901\",\n  \"phone\": \"11988887777\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3333/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"joao.silvateste@bussola.com\",\n  \"password\": \"SenhaSuperForte!2\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3333/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3333",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

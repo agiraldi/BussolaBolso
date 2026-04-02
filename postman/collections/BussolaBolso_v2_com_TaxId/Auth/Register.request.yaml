@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://localhost:3333/auth/register
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "firstName": "Joao",
+      "lastName": "SilvaTeste",
+      "email": "joao.silvateste@bussola.com",
+      "password": "SenhaSuperForte!2",
+      "taxId": "12345678901",
+      "phone": "11988887777"
+    }
+order: 1000

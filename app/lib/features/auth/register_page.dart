@@ -13,6 +13,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final _nomeController = TextEditingController();
   final _cpfController = TextEditingController();
+  final _telefoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmarSenhaController = TextEditingController();
@@ -25,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _nomeController.dispose();
     _cpfController.dispose();
+    _telefoneController.dispose();
     _emailController.dispose();
     _senhaController.dispose();
     _confirmarSenhaController.dispose();
@@ -172,6 +174,30 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           const SizedBox(height: 16),
 
+                          // Campo Telefone
+                          TextFormField(
+                            controller: _telefoneController,
+                            decoration: const InputDecoration(
+                              labelText: 'Telefone (opcional)',
+                              hintText: '(00) 00000-0000',
+                              prefixIcon: Icon(Icons.phone_outlined),
+                            ),
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(11),
+                              _TelefoneInputFormatter(),
+                            ],
+                            validator: (value) {
+                              final digitos = value?.replaceAll(RegExp(r'[^0-9]'), '') ?? '';
+                              if (digitos.isNotEmpty && digitos.length < 10) {
+                                return 'Telefone inválido';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
                           // Campo Email
                           TextFormField(
                             controller: _emailController,
@@ -284,7 +310,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                     lastName: lastName,
                                     email: _emailController.text.trim(),
                                     password: _senhaController.text,
-                                    phone: _cpfController.text, // CPF servindo no backend
+                                    phone: _telefoneController.text.replaceAll(RegExp(r'[^0-9]'), ''),
+                                    taxId: _cpfController.text.replaceAll(RegExp(r'[^0-9]'), ''),
                                   );
 
                                   if (mounted) {
@@ -300,7 +327,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   if (mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(e.toString()),
+                                        content: Text(e.toString().replaceAll('Exception: ', '')),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -375,6 +402,31 @@ class _CpfInputFormatter extends TextInputFormatter {
       buffer.write(digitos[i]);
     }
 
+    final formatted = buffer.toString();
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
+}
+
+// Formatter para Telefone: (00) 00000-0000 ou (00) 0000-0000
+class _TelefoneInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) return newValue;
+    final digitos = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final buffer = StringBuffer();
+    if (digitos.isNotEmpty) buffer.write('(');
+    for (int i = 0; i < digitos.length; i++) {
+      if (i == 2) buffer.write(') ');
+      if (digitos.length == 11 && i == 7) buffer.write('-');
+      else if (digitos.length < 11 && i == 6) buffer.write('-');
+      buffer.write(digitos[i]);
+    }
     final formatted = buffer.toString();
     return TextEditingValue(
       text: formatted,

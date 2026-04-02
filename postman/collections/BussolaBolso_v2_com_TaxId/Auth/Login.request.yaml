@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://localhost:3333/auth/login
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "joao.silvateste@bussola.com",
+      "password": "SenhaSuperForte!2"
+    }
+order: 2000

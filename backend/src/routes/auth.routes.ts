@@ -8,5 +8,7 @@ const authController = new AuthController();
 // inside the class methods if needed, though here we don't rely on 'this'.
 authRoutes.post('/register', authController.register);
 authRoutes.post('/login', authController.login);
+authRoutes.post('/forgot-password', authController.forgotPassword);
+authRoutes.post('/reset-password', authController.resetPassword);
 
 export { authRoutes };

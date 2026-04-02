@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import 'reset_password_page.dart';
+import 'services/auth_service_api.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -11,6 +13,8 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _identifierController = TextEditingController();
+  bool _sucessoEnvio = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -98,41 +102,123 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // Campo E-mail ou CPF
-                          TextFormField(
-                            controller: _identifierController,
-                            decoration: const InputDecoration(
-                              labelText: 'E-mail ou CPF',
-                              hintText: 'Digite seu e-mail ou CPF',
-                              prefixIcon: Icon(Icons.person_outline),
-                            ),
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
-                                return 'Informe seu e-mail ou CPF';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 24),
-
-                          // Botão Enviar
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // TODO: integrar com backend
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Instruções enviadas! Verifique seu e-mail ou SMS.',
-                                    ),
-                                    backgroundColor: AppTheme.primaryColor,
+                          if (_sucessoEnvio)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.green.withOpacity(0.5)),
                                   ),
-                                );
-                              }
-                            },
-                            child: const Text('Enviar'),
-                          ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.check_circle_outline, color: Colors.green),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          'Um código de 6 dígitos foi enviado! Olhe seu e-mail.',
+                                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => ResetPasswordPage(
+                                          identifier: _identifierController.text.trim(),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Já tenho meu código!'),
+                                ),
+                                const SizedBox(height: 8),
+                                TextButton(
+                                  onPressed: () => setState(() => _sucessoEnvio = false),
+                                  child: const Text('Não recebi, reenviar', style: TextStyle(color: Colors.grey)),
+                                ),
+                              ],
+                            ),
+
+                          if (!_sucessoEnvio)
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // Campo E-mail ou CPF
+                                TextFormField(
+                                  controller: _identifierController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'E-mail ou CPF',
+                                    hintText: 'Digite seu e-mail ou CPF',
+                                    prefixIcon: Icon(Icons.person_outline),
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: (value) {
+                                    if (value == null || value.trim().isEmpty) {
+                                      return 'Informe seu e-mail ou CPF';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 24),
+      
+                                // Botão Enviar
+                                ElevatedButton(
+                                  onPressed: _isLoading ? null : () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      setState(() {
+                                        _isLoading = true;
+                                        _sucessoEnvio = false;
+                                      });
+      
+                                      try {
+                                        await AuthServiceApi.forgotPassword(
+                                          identifier: _identifierController.text.trim(),
+                                        );
+      
+                                        if (mounted) {
+                                          setState(() {
+                                            _sucessoEnvio = true;
+                                          });
+                                        }
+                                      } catch (e) {
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(e.toString().replaceAll('Exception: ', 'Erro: ')),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: _isLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Text('Recuperar minha senha'),
+                                ),
+                              ]
+                            ),
                         ],
                       ),
                     ),
