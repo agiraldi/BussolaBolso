@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/theme/app_theme.dart';
-
+import 'services/auth_service_api.dart';
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   bool _senhaVisivel = false;
   bool _confirmarSenhaVisivel = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -264,18 +265,65 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           // Botão Salvar
                           ElevatedButton(
-                            onPressed: () {
+                            onPressed: _isLoading ? null : () async {
                               if (_formKey.currentState!.validate()) {
-                                // TODO: integrar com backend
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Cadastro realizado com sucesso!'),
-                                    backgroundColor: AppTheme.primaryColor,
-                                  ),
-                                );
+                                setState(() {
+                                  _isLoading = true;
+                                });
+                                
+                                try {
+                                  // Divide o nome completo em firstName e lastName
+                                  final partesNome = _nomeController.text.trim().split(' ');
+                                  final firstName = partesNome.first;
+                                  final lastName = partesNome.length > 1 
+                                      ? partesNome.sublist(1).join(' ') 
+                                      : '';
+
+                                  await AuthServiceApi.registerUser(
+                                    firstName: firstName,
+                                    lastName: lastName,
+                                    email: _emailController.text.trim(),
+                                    password: _senhaController.text,
+                                    phone: _cpfController.text, // CPF servindo no backend
+                                  );
+
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Cadastro realizado com sucesso!'),
+                                        backgroundColor: AppTheme.primaryColor,
+                                      ),
+                                    );
+                                    Navigator.of(context).pop(); // Volta p/ Login após sucesso
+                                  }
+                                } catch (e) {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                } finally {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                }
                               }
                             },
-                            child: const Text('Criar Conta'),
+                            child: _isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text('Criar Conta'),
                           ),
                         ],
                       ),

@@ -1,0 +1,20 @@
+$kind: http-request
+name: http://localhost:3333/auth/register
+url: http://localhost:3333/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"firstName\": \"Lucas\",\r
+
+    \  \"lastName\": \"Silva\",\r
+
+    \  \"email\": \"lucas.silva@teste.com\",\r
+
+    \  \"phone\": \"11999999999\",\r
+
+    \  \"password\": \"SenhaForte@123!\"\r
+
+    }"
+order: 1775108381836
