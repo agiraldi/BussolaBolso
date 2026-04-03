@@ -22,10 +22,10 @@ export class AuthController {
         });
         return;
       }
-      
+
       if (error.message === 'E-mail já está em uso' || error.message === 'CPF já cadastrado') {
-         res.status(409).json({ error: error.message });
-         return;
+        res.status(409).json({ error: error.message });
+        return;
       }
 
       console.error('Registration Error:', error);
@@ -53,16 +53,16 @@ export class AuthController {
         });
         return;
       }
-      
+
       if (error.message === 'Erro. E-mail não cadastrado ou senha inválida') {
-         res.status(401).json({ error: error.message }); // 401 Unauthorized
-         return;
+        res.status(401).json({ error: error.message }); // 401 Unauthorized
+        return;
       }
 
       if (error.message === 'Acesso negado. Sua conta está bloqueada.') {
         res.status(403).json({ error: error.message }); // 403 Forbidden
         return;
-     }
+      }
 
       console.error('Login Error:', error);
       res.status(500).json({ error: 'Erro interno no servidor' });
@@ -83,10 +83,10 @@ export class AuthController {
         });
         return;
       }
-      
+
       if (error.message === 'Cadastro não encontrado para este E-mail ou CPF.') {
-         res.status(404).json({ error: error.message });
-         return;
+        res.status(404).json({ error: error.message });
+        return;
       }
 
       if (error.message === 'Acesso negado. Sua conta está bloqueada.') {
@@ -113,10 +113,10 @@ export class AuthController {
         });
         return;
       }
-      
+
       if (error.message === 'Cadastro não encontrado para este E-mail ou CPF.') {
-         res.status(404).json({ error: error.message });
-         return;
+        res.status(404).json({ error: error.message });
+        return;
       }
 
       if (error.message === 'Código de recuperação inválido ou expirado.') {

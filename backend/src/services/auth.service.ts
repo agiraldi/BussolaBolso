@@ -98,7 +98,7 @@ export class AuthService {
 
     // 3. Verify password
     const passwordMatch = await bcrypt.compare(data.password, user.passwordHash);
-    
+
     if (!passwordMatch) {
       throw new Error('Erro. E-mail não cadastrado ou senha inválida');
     }
@@ -106,10 +106,10 @@ export class AuthService {
     // 4. Generate JWT token
     const secret = process.env.JWT_SECRET || 'fallback_secret_local';
     const token = jwt.sign(
-      { 
-        id: user.id, 
-        email: user.email, 
-        isAdmin: user.isAdmin 
+      {
+        id: user.id,
+        email: user.email,
+        isAdmin: user.isAdmin
       },
       secret,
       { expiresIn: '7d' } // Token lasts 7 days
