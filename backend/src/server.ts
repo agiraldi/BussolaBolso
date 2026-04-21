@@ -17,6 +17,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'BussolaBolso API is running!' });
 });
 
-app.listen(port, () => {
-  console.log(`🚀 Server running on http://localhost:${port}`);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${port}`);
 });
